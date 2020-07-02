@@ -41,7 +41,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/filière/{id}/supprimer','adminController@supprimerFiliere') ;
         Route::post('/filière/{id}/éditer','adminController@modifierFiliere') ;
         
-
+        Route::post('etudiant/chercherClasseGroupe', 'adminController@chercherClasseGroupe')->name('etudiant.chercherClasseGroupe');
+       
         Route::get('/paramétre','adminController@paramétre');
     });
     /* 
@@ -49,24 +50,36 @@ Route::group(['middleware' => ['auth']], function () {
     *
     *
     */
-    Route::group(['middleware' => ['chef']], function () {
+    Route::group(['middleware' => ['enseignant']], function () {
+        Route::get('/enseignant','enseignantController@index') ;
+        Route::get('/{name}/emploi','enseignantController@voirEmploi') ;
+        Route::get('/ajouterAbsence','enseignantController@ajouterAbsence') ;
+        Route::get('/générerCodeQr/{id}','enseignantController@genererCodeQr') ;
+        Route::get('/QRcode','enseignantController@QRcode') ;
 
-        Route::get('/chefDeFilière','chefController@index') ;
-        Route::get('/gestion-groupes','chefController@gestionGroupes') ;
-        Route::post('/ajouter-groupe','chefController@stockerGroupe') ;
-        Route::post('/ajouter-classe','chefController@stockerClasse') ;
-        Route::get('/groupes/{id}/supprimer','chefController@supprimerGroupe') ;
-        Route::post('/groupes/{id}/éditer','chefController@modifierGroupe') ;
-        Route::get('/listes-étudiants','chefController@listesEtudiants') ;
-        Route::post('/ajouter_étudiant','chefController@ajouterEtudiant') ;
-        Route::get('/etudiants/{filiere}/{id}/supprimer','chefController@supprimerEtudiant') ;
-        Route::post('/ajouter_groupe','chefController@ajouterGroupe') ;
-        Route::get('/emplois','chefController@emplois') ;
-        Route::get('/voir_emploi','chefController@voirEmploi') ;
-        Route::get('/Emplois/{id}','chefController@modifierEmploi') ;
-        Route::post('/enregistrer_emploi','chefController@enregistrerEmploi') ;
         
-        
+        Route::group(['middleware' => ['chef']], function () {
+
+            Route::get('/chefDeFilière','chefController@index') ;
+            Route::get('/gestion-groupes','chefController@gestionGroupes') ;
+            Route::post('/ajouter-groupe','chefController@stockerGroupe') ;
+            Route::post('/ajouter-classe','chefController@stockerClasse') ;
+            Route::get('/groupes/{id}/supprimer','chefController@supprimerGroupe') ;
+            Route::post('/groupes/{id}/éditer','chefController@modifierGroupe') ;
+            Route::get('/listes-étudiants','chefController@listesEtudiants') ;
+            Route::post('/ajouter_étudiant','chefController@ajouterEtudiant') ;
+            Route::get('/etudiants/{filiere}/{id}/supprimer','chefController@supprimerEtudiant') ;
+            Route::post('/ajouter_groupe','chefController@ajouterGroupe') ;
+            Route::get('/emplois','chefController@emplois') ;
+            Route::get('/voir_emploi','chefController@voirEmploi') ;
+            Route::get('/Emplois/{id}','chefController@modifierEmploi') ;
+            Route::post('/enregistrer_emploi','chefController@enregistrerEmploi') ;
+            
+
+
+            Route::post('groupe/chercher', 'chefController@chercher')->name('groupe.chercher');
+            
+        });
     });
     
 });

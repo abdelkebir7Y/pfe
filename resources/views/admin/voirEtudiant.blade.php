@@ -38,24 +38,28 @@
                                                 </div>
                                             </div> 
                                         </div> 
-                                            <div class="form-group">
-                                                <label class="  small mb-1" for="nApogee">N° Apogée</label>
-                                                <input value="{{$etudiant->nApogee}}" class="form-control py-4 " disabled/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="small mb-1" for="inputEmailAddress">Email</label>
-                                                <input value="{{$etudiant->email}}" class="form-control py-4" disabled/>
-                                            </div>
+                                        <div class="form-group">
+                                            <label class="  small mb-1">N° Apogée</label>
+                                            <input value="{{$etudiant->nApogee}}" class="form-control py-4 " disabled/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="small mb-1" >Email</label>
+                                            <input value="{{$etudiant->email}}" class="form-control py-4" disabled/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="small mb-1" >Filière</label>
+                                            <input value="{{$etudiant->filiere}}" class="form-control py-4" disabled/>
+                                        </div>
                                         <div class="form-row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label class="small mb-1" for="classe">Classe</label>
+                                                    <label class="small mb-1">Classe</label>
                                                     <input value="{{$etudiant->classe}}" class="form-control py-4"disabled />
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label class="small mb-1" for="groupe">Groupe</label>
+                                                    <label class="small mb-1">Groupe</label>
                                                 <input value="{{$etudiant->groupe}}" class="form-control py-4" disabled/>
                                                 </div>
                                             </div> 

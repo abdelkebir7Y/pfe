@@ -1,4 +1,4 @@
-@extends('layouts.chef')
+@extends('layouts.enseignant')
 
 @section('title','Accueil')
 
@@ -20,7 +20,6 @@
                     <img  style="width: 70%;height: 1000%" src="https://dynamic.cirad.fr/var/dynamic/storage/images/dynamic/consortium/maghreb/ucam-maroc/31613-18-fre-FR/ucam-maroc.jpg" alt="">
                 </div>
                 <div class="profile-user-settings">    
-                    <h1 class="profile-user-name">{{$filiere}}</h1>
                     <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#colapseLayouts" aria-expanded="false" aria-controls="colapseLayouts">
                         <button class="btn profile-edit-btn">paramètres</button>               
                         <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
@@ -45,7 +44,7 @@
             <div class="profile-bio">
                 <p>
                     <span class="profile-real-name">
-                        Bienvenue sur la plateforme <i>AbsenceApps</i> pour gérer automatiquement les absences. Vous êtes désormais responsable de la gestion des absences des étudiants filiére <b>{{$filiere}} </b>
+                        Bienvenue sur la plateforme <i>AbsenceApps</i> 
                     </span>
                 </p>
             </div>

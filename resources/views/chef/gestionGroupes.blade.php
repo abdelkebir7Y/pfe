@@ -82,7 +82,7 @@
                                                         $('#new_groupe').modal('show');
                                                     });
                                                 </script>
-                                                @error('classe')
+                                                @error('groupe')
                                                     <div class="alert alert-danger">{{$message}}</div>
                                                 @enderror
                                             @endif
@@ -96,14 +96,19 @@
                                             <div class="form-group">
                                                 <label for="exampleFormControlSelect1" class="mb-0">Nom de la classe</label>
                                                 <select class="form-control px-3" id="exampleFormControlSelect1" name="classe" required >
-                                                    @foreach ($classes as $classe)
-                                                        <option value="{{$classe->classe}}">{{$classe->classe}}</option>
+                                                    @if (old('classe'))
+                                                            <option value="{{old('classe')}}">{{old('classe')}}</option>
+                                                    @endif
+                                                    @foreach ($classes as $classe)   
+                                                        @if (old('classe') != $classe->classe)
+                                                            <option value="{{$classe->classe}}">{{$classe->classe}}</option>
+                                                        @endif
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div class="form-group">
                                                 <label for="recipient-name" class="col-form-label">Nom de Nouveau groupe</label>
-                                                <input type="text" class="form-control" id="nouveau_classe" name="groupe" placeholder="Entrer le nom groupe" required/>
+                                                <input type="text" class="form-control @error('groupe') is-invalid @enderror" value="{{old('groupe')}}" id="nouveau_classe" name="groupe" placeholder="Entrer le nom groupe" required/>
                                             </div>
                                     
                                         </div>

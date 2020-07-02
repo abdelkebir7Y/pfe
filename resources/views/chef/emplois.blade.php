@@ -18,22 +18,29 @@
                             <div class="card-body">
                                 <form action="/voir_emploi" method="GET">
                                     @csrf
-                                    
+                                    @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
                                     <div class="form-row ">
                                         <div class="col-md-6">
-                                            <label for="exampleFormControlSelect1" class="mb-0">Classe</label>
-                                            <select class="form-control px-3 " id="exampleFormControlSelect1" name="classe" >
+                                            <label for="classe" class="mb-0">Classe</label>
+                                            <select class="form-control px-3 dynamic" id="classe" name="classe" data-dependent="groupe">
+                                                <option value="">sélectionner une classe</option>
                                                 @foreach ($groupes as $groupe)
                                                     <option value="{{$groupe->classe}}">{{$groupe->classe}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="exampleFormControlSelect1" class="mb-0">Groupe</label>
-                                            <select class="form-control px-3" id="exampleFormControlSelect1" name="groupe" >
-                                                @foreach ($groupes as $groupe)
-                                                    <option value="{{$groupe->groupe}}">{{$groupe->groupe}}</option>
-                                                @endforeach
+                                            <label for="groupe" class="mb-0">Groupe</label>
+                                            <select class="form-control px-3" id="groupe" name="groupe" >
+                                                <option value="">sélectionner un groupe</option>
                                             </select>
                                         </div>
                                     </div> 
@@ -62,4 +69,31 @@
             </div>
         </footer>
     </div>
+    <script>
+        $(document).ready(function(){
+        
+            $('.dynamic').change(function(){
+                if($(this).val() != '')
+                {
+                    var select = $(this).attr("id");
+                    var value = $(this).val();
+                    var dependent = $(this).data('dependent');
+                    var _token = $('input[name="_token"]').val();
+                    $.ajax({
+                        url:"{{ route('groupe.chercher') }}",
+                        method:"POST",
+                        data:{select:select, value:value, _token:_token, dependent:dependent},
+                        success:function(result)
+                        {
+                            $('#'+dependent).html(result);
+                        }
+                    })
+                }
+            });
+                
+            $('#classe').change(function(){
+                $('#groupe').val('');
+            });
+        });
+    </script>
 @endsection

@@ -27,7 +27,7 @@
                 @endif
                 <div class="row row-cols-6 justify-content-right">
                     <div class="col ">
-                        <button class="btn btn-primary btn-lg active p-2 mb-2"data-toggle="modal"data-target="#ajouter_etudiant" data-whatever="@mdo">ajouter un étudiant</button>
+                        <button class="btn btn-primary btn-lg active p-2 mb-2" data-toggle="modal" data-target="#ajouter_etudiant" data-whatever="@mdo">ajouter un étudiant</button>
                         <div class="modal fade" id="ajouter_etudiant" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -94,12 +94,12 @@
                         </div>
                     </div>
                     <div class="col">
-                        <button class="btn btn-primary btn-lg active p-2 mb-2"data-toggle="modal"data-target="#ajouter_groupe" data-whatever="@mdo">ajouter une liste</button>
+                        <button class="btn btn-primary btn-lg active p-2 mb-2"data-toggle="modal"data-target="#ajouter_groupe" data-whatever="@mdo">importer une liste</button>
                         <div class="modal fade" id="ajouter_groupe" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">ajouter une liste</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel">importer une liste</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -112,7 +112,7 @@
                                             @enderror
                                             <div class="form-row">
                                                 <label class="small mb-1" for="fichier">Choisir un fichier csv</label>
-                                                <input type="file" class="form-control" id="fichier" name="file">
+                                                <input type="file" class="form-control" id="fichier" name="file" accept=".csv">
                                             </div> 
                                             <div class="form-group mt-4 p-0 d-flex justify-content-center">
                                                 <input type="submit" value="Ajouter"class="px-5 btn btn-primary btn-lg active p-2 mb-2">
@@ -167,12 +167,12 @@
                                                 <a href="#" title="modifier" data-serp-pos="1" class="mr-2" style="color:#4caf50">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="#modal" data-toggle="modal" title="supprimer" data-serp-pos="1" class="mr-2" style="color:#f44336">
+                                                <a href="#{{'modal'.$etudiant->id}}" data-toggle="modal" title="supprimer" data-serp-pos="1" class="mr-2" style="color:#f44336">
                                                     <i class="far fa-trash-alt"></i>
                                                 </a>
                                             </td>
                                         </tr>
-                                        <div id="modal" class="modal fade">
+                                        <div id="{{'modal'.$etudiant->id}}" class="modal fade">
                                             <div class="modal-dialog modal-confirm modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">

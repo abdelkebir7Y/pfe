@@ -55,31 +55,29 @@
                                                 <div class="alert alert-danger">{{$message}}</div>
                                             @enderror
                                             <div class="form-group ">
-                                                <label for="exampleFormControlSelect1" class="mb-0">Filière</label>
-                                                <select class="form-control px-3 @error('filiere') is-invalid @enderror" id="exampleFormControlSelect1" name="filiere" >
-                                                    <option value="NULL">sélectionnez une filière</option>
-                                                    <option value="SMI">SMI</option>
-                                                    <option value="SMA">SMA</option>
-                                                    <option value="SMC">SMC</option>
-                                                    <option value="SMP">SMP</option>
-                                                    <option value="SVI">SVI</option>
-                                                    <option value="STU">STU</option>
+                                                <label for="filiere" class="mb-0">Filière</label>
+                                                <select class="form-control px-3 dynamic" id="filiere" name="filiere" data-dependent="classe" required>
+                                                    <option value="">sélectionner une filière</option>
+                                                    @foreach($filieres as $filiere)
+                                                        <option value="{{ $filiere->filiere}}">{{ $filiere->filiere }}</option>
+                                                    @endforeach
                                                 </select>
-                                            </div> 
-                                            @error('filiere')
-                                                <div class="alert alert-danger">{{$message}}</div>
-                                            @enderror
+                                            </div>
                                             <div class="form-row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label class="small mb-1" for="classe">Classe</label>
-                                                        <input value="{{old('classe')}}" class="form-control py-4" id="classe" name="classe" type="text" placeholder="Entrer la classe" required />
+                                                        <select name="classe" id="classe" class="form-control px-3 dynamic" data-dependent="groupe" required>
+                                                            <option value="">Classe</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label class="small mb-1" for="groupe">Groupe</label>
-                                                    <input value="{{old('groupe')}}" class="form-control py-4" id="groupe" type="text" name="groupe" placeholder="Entrer le groupe" required/>
+                                                        <select name="groupe" id="groupe" class="form-control px-3" required>
+                                                            <option value="">Groupe</option>
+                                                        </select>
                                                     </div>
                                                 </div> 
                                                 <input type="hidden" value="etudiant" name="type">
@@ -112,4 +110,38 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function(){
+        
+            $('.dynamic').change(function(){
+                if($(this).val() != '')
+                {
+                    var select = $(this).attr("id");
+                    var value = $(this).val();
+                    var dependent = $(this).data('dependent');
+                    var _token = $('input[name="_token"]').val();
+                    $.ajax({
+                        url:"{{ route('etudiant.chercherClasseGroupe') }}",
+                        method:"POST",
+                        data:{select:select, value:value, _token:_token, dependent:dependent},
+                        success:function(result)
+                        {
+                            $('#'+dependent).html(result);
+                        }
+                    
+                    })
+                }
+            });
+            
+            $('#filiere').change(function(){
+                $('#classe').val('');
+                $('#groupe').val('');
+            });
+            
+            $('#classe').change(function(){
+                $('#groupe').val('');
+            });
+            
+        });
+    </script>
 @endsection

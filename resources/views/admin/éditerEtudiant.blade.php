@@ -39,31 +39,46 @@
                                                         </div>
                                                     </div> 
                                                 </div> 
-                                                    <div class="form-group">
-                                                        <label class="  small mb-1" for="nApogee">N° Apogée</label>
-                                                        <input value="{{old('nApogee') ? old('nApogee') :$etudiant->nApogee}}" class="form-control py-4 @error('nApogee') is-invalid @enderror " name="nApogee" id="nApogee" type="text" placeholder="1615517 " required />
-                                                    </div>
-                                                    @error('nApogee')
-                                                        <div class="alert alert-danger">{{$message}}</div>
-                                                    @enderror
-                                                    <div class="form-group">
-                                                        <label class="small mb-1" for="inputEmailAddress">Email</label>
-                                                        <input value="{{old('email') ? old('email') : $etudiant->email}}" class="form-control py-4 @error('email') is-invalid @enderror" id="inputEmailAddress" name="email" type="email" aria-describedby="emailHelp" placeholder="Entrer émail addresse" required />
-                                                    </div>
-                                                    @error('email')
-                                                        <div class="alert alert-danger">{{$message}}</div>
-                                                    @enderror
+                                                <div class="form-group">
+                                                    <label class="  small mb-1" for="nApogee">N° Apogée</label>
+                                                    <input value="{{old('nApogee') ? old('nApogee') :$etudiant->nApogee}}" class="form-control py-4 @error('nApogee') is-invalid @enderror " name="nApogee" id="nApogee" type="text" placeholder="1615517 " required />
+                                                </div>
+                                                @error('nApogee')
+                                                    <div class="alert alert-danger">{{$message}}</div>
+                                                @enderror
+                                                <div class="form-group">
+                                                    <label class="small mb-1" for="inputEmailAddress">Email</label>
+                                                    <input value="{{old('email') ? old('email') : $etudiant->email}}" class="form-control py-4 @error('email') is-invalid @enderror" id="inputEmailAddress" name="email" type="email" aria-describedby="emailHelp" placeholder="Entrer émail addresse" required />
+                                                </div>
+                                                @error('email')
+                                                    <div class="alert alert-danger">{{$message}}</div>
+                                                @enderror
+                                                <div class="form-group ">
+                                                    <label for="filiere" class="mb-0">Filière</label>
+                                                    <select class="form-control px-3 dynamic" id="filiere" name="filiere" data-dependent="classe" required>
+                                                        <option value="{{old('filiere') ? old('filiere') :$etudiant->filiere}}">{{old('filiere') ? old('filiere') :$etudiant->filiere}}</option>
+                                                        @foreach($filieres as $filiere)
+                                                            @if ($filiere->filiere != $etudiant->filiere)
+                                                                <option value="{{ $filiere->filiere}}">{{ $filiere->filiere }}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </div> 
                                                 <div class="form-row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label class="small mb-1" for="classe">Classe</label>
-                                                            <input value="{{old('classe') ? old('classe') :$etudiant->classe}}" class="form-control py-4" id="classe" name="classe" type="text" placeholder="Entrer la classe" required />
+                                                            <select name="classe" id="classe" class="form-control px-3 dynamic" data-dependent="groupe" required>
+                                                                <option value="{{old('classe') ? old('classe') :$etudiant->classe}}">{{old('classe') ? old('classe') :$etudiant->classe}}</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label class="small mb-1" for="groupe">Groupe</label>
-                                                        <input value="{{old('groupe') ? old('groupe') :$etudiant->groupe}}" class="form-control py-4" id="groupe" type="text" name="groupe" placeholder="Entrer le groupe" required/>
+                                                            <select name="groupe" id="groupe" class="form-control px-3" required>
+                                                                <option value="{{old('groupe') ? old('groupe') :$etudiant->groupe}}">{{old('groupe') ? old('groupe') :$etudiant->groupe}}</option>
+                                                            </select>
                                                         </div>
                                                     </div> 
                                                 </div> 
@@ -96,4 +111,38 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function(){
+        
+            $('.dynamic').change(function(){
+                if($(this).val() != '')
+                {
+                    var select = $(this).attr("id");
+                    var value = $(this).val();
+                    var dependent = $(this).data('dependent');
+                    var _token = $('input[name="_token"]').val();
+                    $.ajax({
+                        url:"{{ route('etudiant.chercherClasseGroupe') }}",
+                        method:"POST",
+                        data:{select:select, value:value, _token:_token, dependent:dependent},
+                        success:function(result)
+                        {
+                            $('#'+dependent).html(result);
+                        }
+                    
+                    })
+                }
+            });
+            
+            $('#filiere').change(function(){
+                $('#classe').val('');
+                $('#groupe').val('');
+            });
+            
+            $('#classe').change(function(){
+                $('#groupe').val('');
+            });
+            
+        });
+    </script>
 @endsection

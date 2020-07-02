@@ -78,8 +78,8 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label for="recipient-name" class="col-form-label">Nom de Nouvelle filière </label>
-                                            <input type="text" class="form-control" id="nouveau_classe" name="filiere" value="{{old('filiere') ?old('filiere') :"" }}" placeholder="Entrer le nom de la filière" required/>
+                                            <label for="nouveau_filiere" class="col-form-label">Nom de Nouvelle filière </label>
+                                            <input type="text" class="form-control" id="nouveau_filiere" name="filiere" value="{{old('filiere') ?old('filiere') :"" }}" placeholder="Entrer le nom de la filière" required/>
                                         </div>
                                 
                                     </div>
@@ -108,6 +108,7 @@
                                     <tr>
                                         <th>Filière</th>
                                         <th>Chef de filière</th>
+                                        <th>Email</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -115,91 +116,25 @@
                                     <tr>        
                                         <th>Filière</th>
                                         <th>Chef de filière</th>
+                                        <th>Email</th>
                                         <th></th>
                                     </tr>
                                 </tfoot>
                                 <tbody> 
                                     @foreach ($filieres as $filiere)
-                                        <tr>
-                                            <td>{{$filiere->filiere}}</td>
-                                            <td>{{$filiere->chef}}</td>
+                                        <tr class="data-row">
+                                            <td class="filiere">{{$filiere->filiere}}</td>
+                                            <td class="chef">{{$filiere->nom.' '.$filiere->prenom}}</td>
+                                            <td class="email">{{$filiere->email}}</td>
                                             <td style="width: 15%"> 
-                                                <a href="#modifier" data-toggle="modal" title="modifier" data-serp-pos="1" class="mr-2" style="color:#4caf50">
+                                                <a href="#" data-item-id="{{$filiere->id}}" id="button_modifier" title="modifier" class="mr-2 modifier" style="color:#4caf50">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="#modal" data-toggle="modal" title="supprimer" data-serp-pos="1" class="mr-2" style="color:#f44336">
+                                                <a href="#"  id="{{$filiere->id}}" title="supprimer"  class="mr-2 supprimer" style="color:#f44336">
                                                     <i class="far fa-trash-alt"></i>
                                                 </a>
                                             </td>
-                                        </tr>
-                                        <div class="modal fade" id="modifier" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Modifier la filière</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form method="POST" action="/filière/{{$filiere->id}}/éditer">
-                                                            @csrf
-                                                            <div class="form-group">
-                                                                <label for="exampleFormControlSelect1" class="mb-0">Chef de filière</label>
-                                                                <select class="form-control px-3" id="exampleFormControlSelect1" name="chef" required >
-                                                                    <option value="{{$filiere->chef}}">{{$filiere->chef}}</option>
-                                                                    @foreach ($enseignants as $enseignant)
-                                                                        @if ($enseignant->name != $filiere->chef )
-                                                                            <option value="{{$enseignant->email}}">{{$enseignant->name.' ('.$enseignant->email.')'}}</option>
-                                                                        @endif
-                                                                    @endforeach
-                                                                </select>
-                                                              </div>
-                                                            <div class="form-group">
-                                                                <label for="recipient-name" class="col-form-label">Nom de filière</label>
-                                                            <input type="text" class="form-control" id="nouveau_classe" name="filiere" value="{{$filiere->filiere}}" required/>
-                                                            </div>
-                                                    
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary active p-2 mb-2" data-dismiss="modal">Annuler</button>
-                                                            <div class="form-group ">
-                                                                <input type="submit" class="btn btn-primary active p-2 mb-2" value="enregistrer">
-                                                            </div>
-                                                            
-                                                            </div>
-                                                        </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div id="modal" class="modal fade">
-                                            <div class="modal-dialog modal-confirm modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <div class="icon-box">
-                                                            <i class="material-icons">&#xE5CD;</i>
-                                                        </div>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Voulez-vous vraiment supprimer la filière <b style="color: red"> {{$filiere->filiere}}</b> ?</p>
-                                                    </div>
-                                                    <div class="modal-footer container">
-                                                        <div class="row">
-                                                            <div class="col-md-auto">
-                                                                <button type="button" class="btn btn-info" data-dismiss="modal">Annuler</button>
-                                                            </div>
-                                                            <div class="col-md-auto">
-                                                                <a href="/filière/{{$filiere->id}}/supprimer">
-                                                                    <button type="button" class="btn btn-danger">Supprimer</button>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>    
+                                        </tr>   
                                     @endforeach       
                                 </tbody>
                             </table>
@@ -208,6 +143,31 @@
                 </div>
             </div>
         </main>
+        <div id="confirmation" class="modal fade">
+            <div class="modal-dialog modal-confirm modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box">
+                            <i class="material-icons">&#xE5CD;</i>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Voulez-vous vraiment supprimer cette filière ?</p>
+                    </div>
+                    <div class="modal-footer container">
+                        <div class="row">
+                            <div class="col-md-auto">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">Annuler</button>
+                            </div>
+                            <div class="col-md-auto">
+                                <button type="button" name="supprimer" id="supprimer" class="btn btn-danger">Supprimer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <footer class="py-4 bg-light mt-auto">
             <div class="container-fluid">
                 <div class="d-flex align-items-center justify-content-between small">
@@ -221,4 +181,102 @@
             </div>
         </footer>
     </div>
+
+    {{-- //////////////////////////////////////////// --}}
+
+    
+    <div class="modal fade" id="modifier_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modifier la filière</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" id="editForm">
+                        @csrf
+                        <div class="form-group">
+                            <label class="mb-0">Chef de filière</label>
+                            <select class="form-control px-3" name="chef" id="modifier_chef" required >
+                                @foreach ($enseignants as $enseignant)
+                                        <option value="{{$enseignant->email}}">{{$enseignant->name.' ('.$enseignant->email.')'}}</option>
+                                @endforeach
+                            </select>
+                          </div>
+                        <div class="form-group">
+                            <label for="filiere" class="col-form-label">Nom de filière</label>
+                            <input id="modifier_filiere" type="text" class="form-control" id="filiere" name="filiere" required/>
+                        </div>
+                
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary active p-2 mb-2" data-dismiss="modal">Annuler</button>
+                        <div class="form-group ">
+                            <input type="submit" class="btn btn-primary active p-2 mb-2" value="enregistrer">
+                        </div>
+                        
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div> 
+    <script>
+        var filiere_id;
+        $(document).ready(function(){
+            $(document).on('click', '.supprimer', function(){
+                filiere_id = $(this).attr('id');
+                console.log(filiere_id);
+                $('#confirmation').modal('show');
+            });
+
+            $('#supprimer').click(function(){
+                $.ajax({
+                    url:"/filière/"+filiere_id+"/supprimer",
+                    beforeSend:function(){
+                        $('#supprimer').text('Suppression ...');
+                    },
+                    success:function(data)
+                    {
+                        setTimeout(function(){
+                            location.reload();
+                        }, 500);
+                    }
+                })
+            });
+
+            //  //////////////////////////////////////////////
+
+            $(document).on('click', "#button_modifier", function() {
+                $(this).addClass('modifier_cette_ligne'); 
+                var options = {
+                'backdrop': 'static'
+                };
+                $('#modifier_modal').modal(options)
+            })
+
+            $('#modifier_modal').on('show.bs.modal', function() {
+                var el = $(".modifier_cette_ligne");
+                var row = el.closest(".data-row");
+                var id = el.data('item-id');
+                var filiere = row.children(".filiere").text();
+                var chef = row.children(".chef").text(); ///////////// nom prenom -------------- n'est pas un email
+                var email = row.children(".email").text();
+                document.getElementById('editForm').setAttribute('action','/filière/'+id+'/éditer');
+                $("#modifier_filiere").val(filiere);
+
+                $("#modifier_chef").prepend("<option value='"+email+"' selected='selected'>"+chef+' ('+email+' )'+"</option>");
+
+
+            })
+
+            $('#modifier_modal').on('hide.bs.modal', function() {
+                $('.modifier_cette_ligne').removeClass('modifier_cette_ligne')
+                $("#editForm").trigger("reset");
+                $("#modifier_chef").trigger("reset");
+                $("#modifier_chef").find('option').get(0).remove();
+            })
+        });
+    </script>
 @endsection

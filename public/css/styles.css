@@ -10498,3 +10498,6 @@ table .hov-column-head-ver1 {
 .alert-danger , .alert-primary {
   text-align: center;
 }
+.no-underline:hover{
+  color:  white !important;
+}

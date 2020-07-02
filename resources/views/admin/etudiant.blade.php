@@ -62,38 +62,11 @@
                                                 <a href="/etudiants/{{$etudiant->id}}/éditer" title="modifier" data-serp-pos="1" class="mr-2" style="color:#4caf50">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="#modal" data-toggle="modal" title="supprimer" data-serp-pos="1" class="mr-2" style="color:#f44336">
+                                                <a href="#" title="supprimer" id="{{$etudiant->id}}" class="mr-2 supprimer" style="color:#f44336">
                                                     <i class="far fa-trash-alt"></i>
                                                 </a>
                                             </td>
-                                        </tr>
-                                        <div id="modal" class="modal fade">
-                                            <div class="modal-dialog modal-confirm modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <div class="icon-box">
-                                                            <i class="material-icons">&#xE5CD;</i>
-                                                        </div>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Voulez-vous vraiment supprimer ce compte ?</p>
-                                                    </div>
-                                                    <div class="modal-footer container">
-                                                        <div class="row">
-                                                            <div class="col-md-auto">
-                                                                <button type="button" class="btn btn-info" data-dismiss="modal">Annuler</button>
-                                                            </div>
-                                                            <div class="col-md-auto">
-                                                                <a href="/etudiants/{{$etudiant->id}}/supprimer">
-                                                                    <button type="button" class="btn btn-danger">Supprimer</button>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>    
+                                        </tr>   
                                     @endforeach       
                                 </tbody>
                             </table>
@@ -102,6 +75,31 @@
                 </div>
             </div>
         </main>
+        <div id="confirmation" class="modal fade">
+            <div class="modal-dialog modal-confirm modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box">
+                            <i class="material-icons">&#xE5CD;</i>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Voulez-vous vraiment supprimer ce compte ?</p>
+                    </div>
+                    <div class="modal-footer container">
+                        <div class="row">
+                            <div class="col-md-auto">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">Annuler</button>
+                            </div>
+                            <div class="col-md-auto">
+                                <button type="button" name="supprimer" id="supprimer" class="btn btn-danger">Supprimer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
         <footer class="py-4 bg-light mt-auto">
             <div class="container-fluid">
                 <div class="d-flex align-items-center justify-content-between small">
@@ -115,4 +113,30 @@
             </div>
         </footer>
     </div>
+    <script>
+        var etudiant_id;
+        $(document).ready(function(){
+            $(document).on('click', '.supprimer', function(){
+                etudiant_id = $(this).attr('id');
+                $('#confirmation').modal('show');
+            });
+
+            $('#supprimer').click(function(){
+                $.ajax({
+                    url:"/etudiants/"+etudiant_id+"/supprimer",
+                    beforeSend:function(){
+                        $('#supprimer').text('Suppression ...');
+                    },
+                    success:function(data)
+                    {
+                        setTimeout(function(){
+                            $('#confirmation').modal('hide');
+                            location.reload();
+                        }, 500);
+                    }
+                })
+            });
+
+        });
+    </script>
 @endsection

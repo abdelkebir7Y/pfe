@@ -30,10 +30,38 @@ class adminController extends Controller
 
     public function creerEtudiant()
     {
-        $filieres = Filiere::all();
-        return view('admin.creerEtudiant')->with('filieres',$filieres);
+        $filieres = DB::table('filieres')
+        ->orderBy('filiere')
+        ->get();
+        return view('admin.creerEtudiant',compact('filieres'));
     }
 
+    public function chercherClasseGroupe(Request $request)
+    {
+        $select = $request->get('select');
+        $value = $request->get('value');
+        $dependent = $request->get('dependent');
+        if ($select == 'filiere') {
+            $data = DB::table('groupes')
+            ->join('classes', 'groupes.classe', '=', 'classes.classe')
+            ->where($select,$value)
+            ->groupBy('groupes.'.$dependent)
+            ->get();
+            $output = '<option value="">sélectionner une '.ucfirst($dependent).'</option>';
+        } else {
+            $data = DB::table('groupes')
+            ->where($select, $value)
+            ->groupBy($dependent)
+            ->get();
+            $output = '<option value="">sélectionner un '.ucfirst($dependent).'</option>';
+        }
+        
+        foreach($data as $row)
+        {
+            $output .= '<option value="'.$row->$dependent.'">'.$row->$dependent.'</option>';
+        }
+        echo $output;
+    }
     public function stockerEtudiant(createCompte $request)
     {
         $etudiant = new etudiant;
@@ -66,7 +94,10 @@ class adminController extends Controller
     public function éditerEtudiant($id)
     {
         $etudiant = etudiant::find($id);
-        return view('admin.éditerEtudiant')->with('etudiant',$etudiant);
+        $filieres = DB::table('filieres')
+        ->orderBy('filiere')
+        ->get();
+        return view('admin.éditerEtudiant',compact('etudiant','filieres'));
     }
 
     public function modifierEtudiant(Request $request, $id)
@@ -103,6 +134,7 @@ class adminController extends Controller
         $etudiant->prenom = $request->prenom;
         $etudiant->nApogee = $request->nApogee;
         $etudiant->email = $request->email;
+        $etudiant->filiere = $request->filiere;
         $etudiant->classe = $request->classe;
         $etudiant->groupe = $request->groupe;
 
@@ -124,8 +156,30 @@ class adminController extends Controller
         $request->session()->flash('success','le compte "'.$etudiant->nom.' '.$etudiant->prenom.'"  a été supprimé avec succès');
         $etudiant->delete();
         $user->delete();
-        return redirect('/comptes-etudiants');
     }
+    /*
+     * **********************************
+     * 
+     * **********************************
+     * 
+     * **********************************
+     * 
+     * **********************************
+     * 
+     */
+    function PPRGenerateur() {
+        $PPR = random_int(100000, 999999);
+    
+        if ($this->PPRExiste($PPR)) {
+            return PPRGenerateur();
+        }
+        return $PPR;
+    }
+    
+    function PPRExiste($PPR) {
+        return DB::table( 'enseignants' )->where( 'PPR', $PPR )->exists();
+    }
+
     /*
      * **********************************
      * 
@@ -152,6 +206,7 @@ class adminController extends Controller
         $enseignant->nom = $request->nom;
         $enseignant->prenom = $request->prenom;
         $enseignant->email = $request->email;
+        $enseignant->PPR = $this->PPRGenerateur();
         $enseignant->nTelephone = $request->nTelephone;
         User::create([
             'name' => $enseignant->nom.' '.$enseignant->prenom,
@@ -214,10 +269,9 @@ class adminController extends Controller
         $enseignant = enseignant::find($id);
         $id = DB::table('users')->where('email', $enseignant->email)->value('id');
         $user = User::find($id);
-        $request->session()->flash('success','le compte "'.$enseignant->nom.' '.$enseignant->prenom.'"  a été supprimé avec succès');
         $enseignant->delete();
         $user->delete();
-        return redirect('/comptes-enseignants');
+        $request->session()->flash('success','le compte "'.$enseignant->nom.' '.$enseignant->prenom.'"  a été supprimé avec succès');
     }
     /*
      * **********************************
@@ -231,9 +285,12 @@ class adminController extends Controller
      */
     public function gestionFiliere()
     {
-        $filieres = Filiere::all();
+        $filieres = DB::table('filieres')
+        ->join('enseignants', 'enseignants.id', '=', 'filieres.chef_id')
+        ->select('filieres.*', 'enseignants.nom', 'enseignants.prenom', 'enseignants.email')
+        ->get();
         $enseignants = DB::table('users')->where('type', 'enseignant')->get();
-        return view('admin.gestionFiliere',compact('filieres','enseignants'));
+        return view('admin.gestionFiliere',compact('filieres','enseignants',));
     }
 
     public function stockefiliere(Request $request)
@@ -256,7 +313,7 @@ class adminController extends Controller
         $enseignant = enseignant::find($id);
         $enseignant->filiere = $request->filiere;
         $filiere->filiere = $request->filiere;
-        $filiere->chef = $chef->name;
+        $filiere->chef_id = $id;
         $enseignant->save();
         $chef->save();
         $filiere->save();
@@ -284,29 +341,26 @@ class adminController extends Controller
         }
         $id = DB::table('users')->where('email', $request->chef)->value('id');
         $chef = User::find($id);
-        if ($filiere->chef !=  $chef->name) {
+        $id = DB::table('enseignants')->where('email', $chef->email)->value('id');
+        if ($filiere->chef_id !=  $id) {
             $chef->type = 'chef de filiere';
-            $id = DB::table('enseignants')->where('email', $request->chef)->value('id');
             $enseignant = enseignant::find($id);
             $enseignant->filiere = $request->filiere;
             $enseignant->save();
             $chef->save();
-            $name = $chef->name;
-
-            $id = DB::table('users')->where('name', $filiere->chef)->value('id');
-            $chef = User::find($id);
-            $chef->type = 'enseignant';
-            $id = DB::table('enseignants')->where('email', $chef->email)->value('id');
+            $chef_id = $id;
+            $id = DB::table('enseignants')->where('id', $filiere->chef_id)->value('id');
             $enseignant = enseignant::find($id);
             $enseignant->filiere = NULL;
+            $id = DB::table('users')->where('email', $enseignant->email)->value('id');
+            $chef = User::find($id);
+            $chef->type = 'enseignant';
             $filiere->filiere = $request->filiere;
-            $filiere->chef = $name;
+            $filiere->chef_id = $chef_id;
             $enseignant->save();
             $chef->save();
         } else {
-            dd($request);
             $filiere->filiere  = $request->filiere;
-            $filiere->chef = $request->chef;
         }
 
         $filiere->save();
@@ -317,17 +371,16 @@ class adminController extends Controller
     public function supprimerFiliere(Request $request , $id)
     {
         $filiere = Filiere::find($id);
-        $id = DB::table('users')->where('name', $filiere->chef)->value('id');
-        $user = User::find($id);
-        $user->type = 'enseignant';
-        $id = DB::table('enseignants')->where('email', $user->email)->value('id');
+        
+        $id = $filiere->chef_id;
         $enseignant = enseignant::find($id);
         $enseignant->filiere = NULL;
-        
+        $id = DB::table('users')->where('email', $enseignant->email)->value('id');
+        $user = User::find($id);
+        $user->type = 'enseignant';
         $filiere->delete();
         $enseignant->save();
         $user->save();
         $request->session()->flash('success','La filière "'.$filiere->filiere.'"  a été supprimé avec succès');
-        return redirect('/gestionFiliere');
     }
 }

@@ -30,7 +30,9 @@ class HomeController extends Controller
         if (Auth::user()->type == 'chef de filiere') {
             return redirect('/chefDeFilière');
         }
-
+        if (Auth::user()->type == 'enseignant') {
+            return redirect('/enseignant');
+        }
         return view('home');
         
     }

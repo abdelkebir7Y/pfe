@@ -21,15 +21,6 @@
     });
 })(jQuery);
 
-$(document).ready(function(){
-    $('.yes').click(function(){
-        $('span').slideDown(); //to show
-    });
-    $('.no').click(function(){
-        $('span').slideUp();  //to hide
-    });
-});
-
 (function ($) {
 	"use strict";
 	$('.column100').on('mouseover',function(){

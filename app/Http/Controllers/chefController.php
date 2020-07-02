@@ -15,6 +15,7 @@ use App\User;
 use App\Emploi;
 use App\Séance;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use App\HTTP\Requests\createCompte;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
@@ -59,6 +60,14 @@ class chefController extends Controller
 
     public function stockerGroupe(Request $request)
     {
+        $messages = [
+            'groupe.unique'  => 'svp choisissez un autre nom pour le groupe',
+        ];
+        $validator = Validator::make($request->all(),[
+            'groupe' => Rule::unique('groupes')->where(function ($query) use ($request) {
+                return $query->where('classe', $request->classe);
+            })
+        ],$messages)->validate();
         $groupe = new Groupe;
         $groupe->classe = $request->classe;
         $groupe->groupe = $request->groupe;
@@ -181,22 +190,54 @@ class chefController extends Controller
         foreach($parts as $index=>$part)
         {
             $fileName = resource_path('pending-files/'.date('y-m-d-H-i-s').$index.'.csv');
+            $i=0;
+            foreach ($part as $content) {
+                $part[$i++]= str_replace(';',',', $content ) ;
+            }
             file_put_contents($fileName,$part);
         }
-
         (new etudiant())->importToDb($filiere);
-        $request->session()->flash('success','import success');
+        $request->session()->flash('success','la liste est importer avec succè');
         return redirect('/listes-étudiants');
     }
 
     public function emplois()
     {
-        $groupes = Groupe::all();
+        $filiere = DB::table('enseignants')->where('email', Auth::user()->email)->value('filiere');
+        $groupes = DB::table('groupes')
+         ->join('classes', 'groupes.classe', '=', 'classes.classe')
+         ->where('filiere',$filiere)
+         ->groupBy('groupes.classe')
+         ->get();
         return view('chef.emplois',compact('groupes'));
+    }
+    function chercher(Request $request)
+    {
+     $select = $request->get('select');
+     $value = $request->get('value');
+     $dependent = $request->get('dependent');
+     $data = DB::table('groupes')
+       ->where($select, $value)
+       ->groupBy($dependent)
+       ->get();
+     $output = '<option value="">sélectionner un '.$dependent.'</option>';
+     foreach($data as $row)
+     {
+      $output .= '<option value="'.$row->$dependent.'">'.$row->$dependent.'</option>';
+     }
+     echo $output;
     }
 
     public function voirEmploi(Request $request)
     {
+        $messages = [
+            'classe.required' => 'svp sélectionnez une classe',
+            'groupe.required' => 'svp sélectionnez un groupe',
+        ];
+        $validator = Validator::make($request->all(), [
+            'classe' => 'required',
+            'groupe' => 'required',
+        ], $messages)->validate();
         $filiere = DB::table('enseignants')->where('email', Auth::user()->email)->value('filiere');
         $id = DB::table('emplois')->where([
             ['groupe', $request->groupe],
@@ -287,3 +328,4 @@ class chefController extends Controller
         return redirect($redirection);
     }
 }
+?>

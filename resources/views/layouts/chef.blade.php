@@ -62,7 +62,28 @@
                                 Accueil</a
                             >
                             <div class="sb-sidenav-menu-heading">mon compte</div>
-                            
+                            <a class="nav-link collapsed active" href="/{{Auth::user()->name }}/emploi">
+                                <div class="sb-nav-link-icon"><i class="far fa-clock"></i></div>
+                                Emploi de temps
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon">
+                                    <i class="fas fa-book-open"></i>
+                                </div>
+                                    Gestion des absences
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link collapsed" href="/ajouterAbsence" >
+                                        <div class="sb-nav-link-icon"><i class="fas fa-users-cog"></i></div>ajouter un absence 
+                                    </a>
+                                    <a class="nav-link collapsed" href="/listeAbsence" >
+                                        <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>Listes des absence
+                                    </a>
+                                </nav>
+                            </div>
                             <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                                 <div class="sb-nav-link-icon">
                                     <i class="fas fa-book-open"></i>

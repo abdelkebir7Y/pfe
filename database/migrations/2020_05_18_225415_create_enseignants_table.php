@@ -19,6 +19,7 @@ class CreateEnseignantsTable extends Migration
             $table->string('prenom');
             $table->string('email')->unique();
             $table->string('nTelephone');
+            $table->integer('PPR')->unique();
             $table->string('filiere')->nullable(($value = true));
             $table->timestamps();
         });
