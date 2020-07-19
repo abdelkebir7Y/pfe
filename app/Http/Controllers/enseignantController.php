@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Séance;
+use App\Qrcode;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Crypt;
 class enseignantController extends Controller
 {
     public function index()
@@ -23,17 +25,20 @@ class enseignantController extends Controller
     public function ajouterAbsence()
     {
         $name = Auth::user()->name;
-        $i = Carbon::now()->dayOfWeek+1 ; //qsdfghjklmùsdrfghjklmù*fghjn,km:drfyhjklmdfyghijklmù* 7yd hadxi +1 
+        $i = Carbon::now()->dayOfWeek ; //qsdfghjklmùsdrfghjklmù*fghjn,km:drfyhjklmdfyghijklmù* 7yd hadxi +1 
         $seances = DB::table('séances')->where('enseignant',$name)->get();
         return view('enseignant.ajouterAbsence',compact('seances','i'));
     }
 
     public function genererCodeQr($id)
     {
-        $seance = Séance::find($id);
-        $file = public_path(Auth::user()->email.'.png');
-        $contenu = Carbon::now();
-        \QRCode::text($contenu)->setOutfile($file)->png();
+        $qrcode = new Qrcode ; 
+        $qrcode->séance_id = $id;
+        $qrcode->id  = bin2hex(openssl_random_pseudo_bytes(40));
+        $qrcode->image = public_path(Auth::user()->email.'.png');
+        $contenu = encrypt($qrcode->id);
+        \QRCode::text($contenu)->setOutfile($qrcode->image)->png();
+        $qrcode->save();
         return redirect('/QRcode');
     }
 

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\User;
+use App\Qrcode;
+use Illuminate\Support\Facades\Crypt;
 
 class apiController extends Controller
 {
@@ -45,6 +47,17 @@ class apiController extends Controller
         $emploi = DB::table('séances')->select('jour' ,'heureD','heureF','salle','enseignant','type','module')->where('emploi', 1)->get();
         return response()->json(['emploi' =>$emploi , 'code'=> 200]);
     }
-
+    public function qrcode(Request $request){
+        $id = decrypt($request->qrcode);
+        $code = Qrcode::find($id);
+        if($code !== null)
+        {
+            if ($code->valide === 1) {
+                return response()->json(['message'=>'vous avez noté votre presence' , 'code'=> 200]);
+            }
+            return response()->json(['message'=>'vous êtes en retard' ,'code'=> 300]);
+        }
+        return response()->json(['message'=>'Qrcode n\'est pas valide' ,'code'=> 400]);
+    }
 }
 ?>

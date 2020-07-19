@@ -39,7 +39,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-6  float-right">
-                                    <a href="/ajouterAbsence">
+                                    <a href="/enregistrerAbsence">
                                         <button type="button" class="btn btn-primary active  px-3 py-1 mb-0" >enregistrer</button>
                                     </a>
                                 </div> 
