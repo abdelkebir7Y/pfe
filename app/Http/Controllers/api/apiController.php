@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\User;
 use App\Qrcode;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 
 class apiController extends Controller
@@ -31,11 +32,15 @@ class apiController extends Controller
             return response()->json(['message'=>'Le mot de passe que vous avez saisi est incorrect ou le nom d\'utilisateur entré ne correspond à aucun compte.','code'=>400]);
         }
         if( auth()->user()->type !== 'etudiant'){
-            return response()->json(['message'=> 'Cette application est destinée aux étudiants ------Merci------','code'=>401]);
+            return response()->json(['message'=> 'Cette application est destinée aux étudiants\n ------Merci------','code'=>401]);
         }
+        $user =DB::table('users')
+            ->join('etudiants', 'users.email', '=', 'etudiants.email')
+            ->select('users.id', 'users.email', 'users.name', 'etudiants.classe','etudiants.groupe')
+            ->get();
         $emploi = DB::table('séances')->select('jour' ,'heureD','heureF','salle','enseignant','type','module')->where('emploi', 1)->get();
         $accessToken = auth()->user()->createToken('authToken')->accessToken;
-        return response()->json(['emploi' =>$emploi ,'user'=>auth()->user(), 'tokens'=>$accessToken, 'code'=>200]);
+        return response()->json(['emploi' =>$emploi ,'user'=>$user[0], 'tokens'=>$accessToken, 'code'=>200]);
     }
     public function logout(Request $request){
         DB::table('oauth_access_tokens')->where('user_id', $request->id)->delete();
@@ -58,6 +63,20 @@ class apiController extends Controller
             return response()->json(['message'=>'vous êtes en retard' ,'code'=> 300]);
         }
         return response()->json(['message'=>'Qrcode n\'est pas valide' ,'code'=> 400]);
+    }
+    public function changePassword(Request $request){
+        $loginData = $request->validate([
+            'email' =>'required|email',
+            'password' => 'required',
+        ]);
+        if(!auth()->attempt($loginData)){
+            return response()->json(['message'=>'Le mot de passe que vous avez saisi est incorrect','code'=>400]);
+        }
+        $id = DB::table('users')->where('email', $request->email)->value('id');
+        $user = User::find($id);
+        $user->password = Hash::make($request->nPassword);
+        $user->save();
+        return response()->json(['code'=>200]);
     }
 }
 ?>
