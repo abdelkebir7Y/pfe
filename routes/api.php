@@ -22,5 +22,6 @@ Route::post('/register','api\apiController@register');
 Route::post('/login','api\apiController@login');
 Route::post('/logout','api\apiController@logout');
 Route::post('/emploi','api\apiController@emploi');
+Route::post('/justification','api\apiController@justification');
 Route::post('/qrcode','api\apiController@qrcode');
 Route::post('/changePassword','api\apiController@changePassword');

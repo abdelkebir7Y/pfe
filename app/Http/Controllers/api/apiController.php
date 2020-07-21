@@ -50,8 +50,34 @@ class apiController extends Controller
 
 
     public function emploi(Request $request){
-        $emploi = DB::table('séances')->select('jour' ,'heureD','heureF','salle','enseignant','type','module')->where('emploi', 1)->get();
+        $etudiant_groupe = DB::table('etudiants')
+            ->join('users', 'etudiants.email', '=', 'users.email')
+            ->where('users.id' , $request->id)
+            ->select('etudiants.groupe')
+            ->value('groupe');
+        $emploi_id = DB::table('emplois')
+            ->where('groupe' , $etudiant_groupe)
+            ->value('id');
+        $emploi = DB::table('séances')
+            ->select('jour' ,'heureD','heureF','salle','enseignant','type','module')
+            ->where('emploi', $emploi_id)
+            ->get();
         return response()->json(['emploi' =>$emploi , 'code'=> 200]);
+    }
+
+
+    public function justification(Request $request){
+        
+        $etudiant_id = DB::table('etudiants')
+            ->join('users', 'etudiants.email', '=', 'users.email')
+            ->where('users.id' , $request->id)
+            ->select('etudiants.id')
+            ->value('id');
+        $justification = DB::table('justifications')
+            ->select('date' ,'dateDebut','dateFin','motif','commentaire','validité')
+            ->where('etudiant_id', $etudiant_id)
+            ->get();
+        return response()->json(['justification' =>$justification , 'code'=> 200]);
     }
 
 
@@ -62,8 +88,7 @@ class apiController extends Controller
             ->join('users', 'etudiants.email', '=', 'users.email')
             ->where('users.id' , $request->id)
             ->select('etudiants.id')
-            ->get();
-        $etudiant_id = $etudiant_id[0]->id;
+            ->value('id');
         $value = Cache::get($id);
         unset($value[$etudiant_id]); 
         Cache::put($id, $value,6000);

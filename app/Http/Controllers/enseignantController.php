@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Séance;
 use App\Qrcode;
+use App\Absence;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Cache;
@@ -48,13 +49,19 @@ class enseignantController extends Controller
         $qrcode->save();
         Cache::put($qrcode->id, $etudiants,6000);
         $image = Auth::user()->email.'.png';
-        return view('enseignant.Qrcode')->with('image',$image);
+        $id = $qrcode->id;
+        return view('enseignant.Qrcode',compact('image','id'));
     } 
     public function enregistrerAbsence($id){
-        $id = DB::table('qrcodes')
-            ->where('séance_id' , $id)
-            ->get('id');
         $qrcode = QRcode::find($id);
+        $etudiants = Cache::get($id);
+        foreach ($etudiants as $etudiant) {
+            $absence = new Absence;
+            $absence->etudiant_id = $etudiant->id;
+            $absence->séance_id = $qrcode->séance_id;
+            $absence->date = Carbon::now();
+            $absence->save();
+        }
         $qrcode->valide =0;
         $qrcode->save();
         return \redirect('/');

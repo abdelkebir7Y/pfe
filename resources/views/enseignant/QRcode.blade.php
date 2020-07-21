@@ -20,10 +20,10 @@
                 <div class="row justify-content-center">
                     <div class="card mb-4">
                         <div class="card-header">
-                            <i class="fas fa-table mr-1"></i>svp scannez le code ci dessous.
+                            <i class="fas fa-table mr-1"></i><span style="padding-right : 80px"> scannez le code ci dessous. </span>
                             <div class="float-right ">
                                 <div class="col-md-6 float-left">
-                                    <a href="/enregistrerAbsence/{{$id}}">
+                                    <a href="/ajouterAbsence">
                                         <button type="button" class="btn btn-secondary active  px-3 py-1 mb-0" >Annuler</button>
                                     </a>
                                 </div>
