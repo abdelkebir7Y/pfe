@@ -9,6 +9,7 @@ use App\User;
 use App\Qrcode;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Cache;
 
 class apiController extends Controller
 {
@@ -52,18 +53,34 @@ class apiController extends Controller
         $emploi = DB::table('séances')->select('jour' ,'heureD','heureF','salle','enseignant','type','module')->where('emploi', 1)->get();
         return response()->json(['emploi' =>$emploi , 'code'=> 200]);
     }
+
+
     public function qrcode(Request $request){
         $id = decrypt($request->qrcode);
+        
+        $etudiant_id = DB::table('etudiants')
+            ->join('users', 'etudiants.email', '=', 'users.email')
+            ->where('users.id' , $request->id)
+            ->select('etudiants.id')
+            ->get();
+        $etudiant_id = $etudiant_id[0]->id;
+        $value = Cache::get($id);
+        unset($value[$etudiant_id]); 
+        Cache::put($id, $value,6000);
+
         $code = Qrcode::find($id);
         if($code !== null)
         {
             if ($code->valide === 1) {
-                return response()->json(['message'=>'vous avez noté votre presence' , 'code'=> 200]);
+                return response()->json(['message'=>'Vous avez noté votre présence', 'code'=> 200]);
             }
-            return response()->json(['message'=>'vous êtes en retard' ,'code'=> 300]);
+            return response()->json(['message'=>'Vous êtes en retard' ,'code'=> 300]);
         }
         return response()->json(['message'=>'Qrcode n\'est pas valide' ,'code'=> 400]);
     }
+
+
+
     public function changePassword(Request $request){
         $loginData = $request->validate([
             'email' =>'required|email',

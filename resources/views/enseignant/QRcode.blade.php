@@ -15,31 +15,20 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     </head>
     <body >
-        <div id="layoutSidenav_content">{{-- 
-            <main>
-                <div class="container-fluid">
-                    <h1 class="mt-4">Emploi du temps</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item"><a href="/chefDeFilière">Accueil</a></li>
-                        <li class="breadcrumb-item"><a href="/emplois">Emplois</a></li>
-                        <li class="breadcrumb-item active">{{$emploi->classe.' -> '.$emploi->groupe}}</li>
-
-                    </ol>
-                </div>
-            </main> --}}
+        <div id="layoutSidenav_content">
             <div class="container h-95">
                 <div class="row justify-content-center">
                     <div class="card mb-4">
                         <div class="card-header">
-                            <i class="fas fa-table mr-1"></i>svp scannez le code ci dessous<b> G03.
+                            <i class="fas fa-table mr-1"></i>svp scannez le code ci dessous.
                             <div class="float-right ">
                                 <div class="col-md-6 float-left">
-                                    <a href="/ajouterAbsence">
+                                    <a href="/enregistrerAbsence/{{$id}}">
                                         <button type="button" class="btn btn-secondary active  px-3 py-1 mb-0" >Annuler</button>
                                     </a>
                                 </div>
                                 <div class="col-md-6  float-right">
-                                    <a href="/enregistrerAbsence">
+                                    <a href="/enregistrerAbsence/{{$id}}">
                                         <button type="button" class="btn btn-primary active  px-3 py-1 mb-0" >enregistrer</button>
                                     </a>
                                 </div> 
@@ -49,20 +38,6 @@
                     </div> 
                 </div>
             </div>
-            {{-- <div id="layoutAuthentication_footer">
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy;</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-            </div> --}}
         </div>
         <script src="/js/modifierEmploi.js"></script>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>

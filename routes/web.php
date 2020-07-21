@@ -55,8 +55,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{name}/emploi','enseignantController@voirEmploi') ;
         Route::get('/ajouterAbsence','enseignantController@ajouterAbsence') ;
         Route::get('/générerCodeQr/{id}','enseignantController@genererCodeQr') ;
-        Route::get('/QRcode','enseignantController@QRcode') ;
-        Route::get('/enregistrerAbsence','enseignantController@enregistrerAbsence') ;
+        Route::get('/enregistrerAbsence/{id}','enseignantController@enregistrerAbsence') ;
 
         
         Route::group(['middleware' => ['chef']], function () {

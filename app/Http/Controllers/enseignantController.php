@@ -9,6 +9,7 @@ use App\Séance;
 use App\Qrcode;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Cache;
 class enseignantController extends Controller
 {
     public function index()
@@ -25,7 +26,7 @@ class enseignantController extends Controller
     public function ajouterAbsence()
     {
         $name = Auth::user()->name;
-        $i = Carbon::now()->dayOfWeek ; //qsdfghjklmùsdrfghjklmù*fghjn,km:drfyhjklmdfyghijklmù* 7yd hadxi +1 
+        $i = Carbon::now()->dayOfWeek ;
         $seances = DB::table('séances')->where('enseignant',$name)->get();
         return view('enseignant.ajouterAbsence',compact('seances','i'));
     }
@@ -38,13 +39,24 @@ class enseignantController extends Controller
         $qrcode->image = public_path(Auth::user()->email.'.png');
         $contenu = encrypt($qrcode->id);
         \QRCode::text($contenu)->setOutfile($qrcode->image)->png();
+        $etudiants = DB::table('etudiants')
+            ->join('emplois', 'etudiants.groupe', '=', 'emplois.groupe')
+            ->join('séances', 'emplois.id', '=', 'séances.emploi')
+            ->where('séances.id' , $id)
+            ->select('etudiants.id')
+            ->get();
         $qrcode->save();
-        return redirect('/QRcode');
-    }
-
-    public function QRcode()
-    {
+        Cache::put($qrcode->id, $etudiants,6000);
         $image = Auth::user()->email.'.png';
-        return view('enseignant.QRcode')->with('image',$image);
+        return view('enseignant.Qrcode')->with('image',$image);
+    } 
+    public function enregistrerAbsence($id){
+        $id = DB::table('qrcodes')
+            ->where('séance_id' , $id)
+            ->get('id');
+        $qrcode = QRcode::find($id);
+        $qrcode->valide =0;
+        $qrcode->save();
+        return \redirect('/');
     }
 }
